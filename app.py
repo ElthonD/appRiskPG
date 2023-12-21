@@ -27,7 +27,7 @@ st.set_page_config(
 )
 
 # Title of the main page
-pathLogo = './img/AI27Mercadolibre.png'
+pathLogo = './img/AI27P&G.png'
 display = Image.open(pathLogo)
 display = np.array(display)
 col1, col2, col3 = st.columns([1,5,1])
