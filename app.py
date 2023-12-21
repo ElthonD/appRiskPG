@@ -503,7 +503,7 @@ try:
     mapa = map_coropleta_fol(df_selected_mes, filtro)
 
     #Modulo de Predictivo
-    st.markdown("<h3 style='text-align: left;'>% Riesgo de los Servicios</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: left;'>% RIESGO DE LOS SERVICIOS</h3>", unsafe_allow_html=True)
 
     st.write(""" 
     Pasos a seguir para este módulo:
