@@ -507,7 +507,7 @@ try:
 
     st.write(""" 
     Pasos a seguir para este módulo:
-    1. Descargar archivo **"BITÁCORAS"** (Prebitácoras) de **Mondelez** del **Área de Centro de Monitoreo** del **PowerBI**, en el **Reporte CM**, sección **Prebitácoras**.
+    1. Descargar archivo **"BITÁCORAS"** (Prebitácoras) de **P&G** del **Área de Centro de Monitoreo** del **PowerBI**, en el **Reporte CM**, sección **Prebitácoras**.
     2. Abrir archivos de Excel **"BITÁCORAS"** y **"Plantilla para Probabilidad de Robo"**.
     3. Convertir archivo descargado de prebitácora **"BITÁCORAS"** en plantilla para probabilidad de robo, para esto debe:
     + Copiar datos de la columna **"Creación"** del archivo **"BITÁCORAS"** y pegar en columna **"Fecha Creación"** del archivo **"Plantilla para Probabilidad de Robo"**.
