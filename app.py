@@ -225,8 +225,6 @@ try:
     df = load_HR()
     df1 = load_AR()
     df2 = load_AN()
-    df3 = load_df()
-
 
     #df = df[['Año', 'Tipo evento', 'Fecha y Hora', 'Estado', 'Tramo', 'Mes', 'Día']]
 
@@ -519,6 +517,8 @@ try:
     4. Finalmente, subir archivo **"Plantilla para Probabilidad de Robo"** en la aplicación.
     """)
 
+    df3 = load_df()
+    
     uploaded_file = st.file_uploader("Subir archivo Excel de pre-bitácora", type=['xlsx'])
 
     if uploaded_file is not None:
