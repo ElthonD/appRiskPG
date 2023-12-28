@@ -593,9 +593,26 @@ try:
 
     df10 = df8[df8['Origen Destino'].isin(df9['Origen Destino'])] # aca se aplica filtro para buscar los tramos basados en origen y destino
 
-    table = pd.pivot_table(df10, index = ["Origen Destino", "Distancia", "DuracionEstimada", "Estadías NOM-087"], columns = ["Anomalía"], aggfunc = 'size', fill_value=0)
+    df11 = df.copy()
+    df11['Origen Destino'] = df11['Estado Origen'] + '-' + df11['Estado Destino']
+    df12 = df11[df11['Origen Destino'].isin(df10['Origen Destino'])] # aca se aplica filtro para buscar los tramos basados en origen y destino
+    df13 = pd.DataFrame(df12.groupby("Origen Destino")["Bitácora"].count())
 
-    st.dataframe(table)
+    st.write(df13)
+    table = pd.pivot_table(df10, index = ["Origen Destino", "Distancia", "DuracionEstimada", "Estadías NOM-087"], columns = ["Anomalía"], aggfunc = 'size', fill_value=0)
+    def custFunc(d1,d2):
+        return d1 / d2
+    
+    #col = table.columns
+    #val = len(col)
+    #print(val)
+    #f14 = table.iloc[:, 4:-1] # Primeras cinco columnas
+    #f14 = table.iloc[:,:val] # Primeras cinco columnas
+
+    df14 = table / df13['Bitácora']
+    #df14 = custFunc(df1, df2.loc[0]).fillna(df1)
+
+    st.dataframe(df14)
 
     
 except UnboundLocalError as e:
