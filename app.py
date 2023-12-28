@@ -587,6 +587,7 @@ try:
         st.dataframe(res,column_config={"Ubicación de Referencia": st.column_config.LinkColumn("Ubicación Referencial")}, hide_index=True)
     
     # Patron de Anomalias en Robos
+    st.markdown("<h3 style='text-align: left;'>PATRÓN DE ANOMALÍAS EN ROBOS</h3>", unsafe_allow_html=True)
     df8 = df1.copy() #Anomalias en Robos
     df9 = filtro1.copy() #filtro de origen destino de zonas de riesgo
 
