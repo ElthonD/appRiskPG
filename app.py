@@ -110,7 +110,8 @@ def load_AR():
     AR['Mes'] = AR['MesN'].map({1:"Enero", 2:"Febrero", 3:"Marzo", 4:"Abril", 5:"Mayo", 6:"Junio", 7:"Julio", 8:"Agosto", 9:"Septiembre", 10:"Octubre", 11:"Noviembre", 12:"Diciembre"})
     AR['Hora'] = AR['Fecha'].apply(lambda x: x.hour)
     AR['Estadías NOM-087'] = AR['DuracionEstimada'].map(lambda x: int(x/5) if x > 5 else 0)
-    #AR['Estadías NOM-087'] = np.ceil(AR['Estadías NOM-087']) 
+    #AR['Estadías NOM-087'] = np.ceil(AR['Estadías NOM-087'])
+    AR['Origen Destino'] = AR['EstadoOrigen'] + '-' + AR['EstadoDestino']
     AR = AR.drop(['Número Envío'], axis=1)
     AR = AR.dropna()
     return AR
@@ -586,8 +587,11 @@ try:
         st.dataframe(res,column_config={"Ubicación de Referencia": st.column_config.LinkColumn("Ubicación Referencial")}, hide_index=True)
     
     # Patron de Anomalias en Robos
-        
-    table = pd.pivot_table(df_selected_diaxx, index = ["Cliente", "EstadoOrigen", "EstadoDestino", "Distancia", "DuracionEstimada", "Estadías NOM-087"], columns = ["Anomalía"], aggfunc = ["size"], fill_value=0)
+    df8 = df1.copy() #Anomalias en Robos
+    df9 = filtro1.copy() #filtro de origen destino de zonas de riesgo
+
+    df10 = df8[df8['Origen Destino'].isin(df9['Origen Destino'])] # aca se aplica filtro para buscar los tramos basados en origen y destino
+    table = pd.pivot_table(df10, index = ["Origen Destino", "Distancia", "DuracionEstimada", "Estadías NOM-087"], columns = ["Anomalía"], aggfunc = ["size"], fill_value=0)
     st.dataframe(table)
     
 except UnboundLocalError as e:
