@@ -12,6 +12,7 @@ import numpy as np
 from PIL import Image
 import requests
 import pickle
+from IPython.display import HTML
 
 # Configuración warnings
 # ==============================================================================
@@ -492,7 +493,7 @@ try:
     # Mapa
 
     d1 = df_selected_mes.copy()
-    d2 = df2.copy() # anom
+    d2 = df2.copy() # anomalías
 
     d1['Cod1'] = d1.Cliente + d1.Año.astype(str) + d1.Mes
     d2['Cod2'] = d2.Cliente + d2.Año.astype(str) + d2.Mes
@@ -560,6 +561,35 @@ try:
     with col2:
         st.write(entrada_datos2)
 
+    #Modulo de Zonas de Riesgo
+    st.markdown("<h3 style='text-align: left;'>ZONAS DE RIESGO DE LOS SERVICIOS</h3>", unsafe_allow_html=True)
+
+    df4 = entrada_datos.copy()  # Aca tiene el origen destino, la columna se llama Origen Destino
+    df5 = entrada_datos2.copy()
+    df6 = pd.concat([df5,df4], axis=1)
+    df6 = df6[['Bitácora','Origen','Destino','Origen Destino']]
+    
+    df7= df.copy() # copiar historico de robos
+    df7['Origen Destino'] = df7['Estado Origen'] + '-' + df7['Estado Destino']
+
+    filtro1 = df7[df7['Origen Destino'].isin(df6['Origen Destino'])] # aca se aplica filtro para buscar los tramos basados en origen y destino
+
+    res= df6.merge(df7, on="Origen Destino", how="left")
+    res['Location'] = res['Latitud'].astype(str) + ',' +  res['Longitud'].astype(str)
+    res['Ubic'] = 'https://maps.google.com?q='+ res.Location
+    res = res[['Bitácora_x','Origen_x','Destino','Tramo','Ubic']]
+    res = res.rename(columns={'Bitácora_x':'Bitácora', 'Origen_x':'Origen', 'Destino':'Destino', 'Tramo':'Zona de Riesgo', 'Ubic':'Ubicación de Referencia'})
+    res = res.drop_duplicates()
+    res['Zona de Riesgo'] = res['Zona de Riesgo'].fillna('Sin registro histórico')
+    col4, col5, col6 = st.columns([0.5,6,0.5])
+    with col5:
+        st.dataframe(res,column_config={"Ubicación de Referencia": st.column_config.LinkColumn("Ubicación Referencial")}, hide_index=True)
+    
+    # Patron de Anomalias en Robos
+        
+    table = pd.pivot_table(df_selected_diaxx, index = ["Cliente", "EstadoOrigen", "EstadoDestino", "Distancia", "DuracionEstimada", "Estadías NOM-087"], columns = ["Anomalía"], aggfunc = ["size"], fill_value=0)
+    st.dataframe(table)
+    
 except UnboundLocalError as e:
     print("Seleccionar: ", e)
 
