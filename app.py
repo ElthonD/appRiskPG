@@ -592,8 +592,11 @@ try:
     df9 = filtro1.copy() #filtro de origen destino de zonas de riesgo
 
     df10 = df8[df8['Origen Destino'].isin(df9['Origen Destino'])] # aca se aplica filtro para buscar los tramos basados en origen y destino
-    table = pd.pivot_table(df10, index = ["Origen Destino", "Distancia", "DuracionEstimada", "Estadías NOM-087"], columns = ["Anomalía"], aggfunc = ["size"], fill_value=0)
+
+    table = pd.pivot_table(df10, index = ["Origen Destino", "Distancia", "DuracionEstimada", "Estadías NOM-087"], columns = ["Anomalía"], aggfunc = 'size', fill_value=0)
+
     st.dataframe(table)
+
     
 except UnboundLocalError as e:
     print("Seleccionar: ", e)
