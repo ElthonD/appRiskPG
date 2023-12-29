@@ -1,0 +1,10 @@
+# Spacefile Docs: https://go.deta.dev/docs/spacefile/v0
+v: 0
+micros:
+  - name: appRiskPG
+    src: ./
+    engine: python3.9
+    primary: true
+    run: streamlit run app.py
+    public_routes:
+      - /*
