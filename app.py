@@ -575,7 +575,7 @@ try:
     #st.markdown("<h5 style='text-align: left;'>% Riesgo de los Servicios</h5>", unsafe_allow_html=True)
     with col5:
         #entrada_datos2.style.format({'% Riesgo': "{:.2}"})
-        st.dataframe(entrada_datos2.style.format({'% Riesgo': "{:.2f}"}).applymap(lambda x: f'background-color: red; color: darkred' if x >= 70 else \
+        st.dataframe(entrada_datos2.style.format({'% Riesgo':"{:.2f}"}).applymap(lambda x: f'background-color: red; color: darkred' if x >= 70 else \
                                             f'background-color: yellow; color: darkgoldenrod' if x < 70 and x >= 50 else \
                                             (f'background-color: goldenrod; color: gold' if x < 50 and x >= 20 else f'background-color: green; color: greenyellow'), subset= ['% Riesgo']), hide_index= True)
 
@@ -601,8 +601,10 @@ try:
     res['Zona de Riesgo'] = res['Zona de Riesgo'].fillna('Sin registro histórico')
     col4, col5, col6 = st.columns([0.5,6,0.5])
     with col5:
-        st.dataframe(res,column_config={"Ubicación de Referencia": st.column_config.LinkColumn("Ubicación Referencial")}, hide_index=True)
-    
+        
+        st.dataframe(res.style.set_properties(**{'color': 'blue'}, subset=['Ubicación de Referencia']), column_config={"Ubicación de Referencia": st.column_config.LinkColumn("Ubicación Referencial")}, hide_index=True)
+        #st.dataframe(res,column_config={"Ubicación de Referencia": st.column_config.LinkColumn("Ubicación Referencial")}, hide_index=True)
+
     # Patron de Anomalias en Robos
     st.markdown("<h3 style='text-align: left;'>PATRÓN DE ANOMALÍAS EN ROBOS</h3>", unsafe_allow_html=True)
     df8 = df1.copy() #Anomalias en Robos
