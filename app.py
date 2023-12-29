@@ -222,6 +222,10 @@ def resultados_proba(uploaded_file):
 def load_model():
     return pickle.load(open('risk_prob_pg.pkl', 'rb'))
 
+def color(val):
+    d = {90:'red', 60: 'yellow', 40:'goldenrod', 10: 'green'}
+    return f'background-color: {d[val]}; color: {d[val]}' if val in d else ''
+
 try:
 
     df = load_HR()
@@ -503,7 +507,7 @@ try:
     mapa = map_coropleta_fol(df_selected_mes, filtro)
 
     #Modulo de Predictivo
-    st.markdown("<h3 style='text-align: left;'>% RIESGO DE LOS SERVICIOS</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: left;'>PRIORIZACIÓN DE LOS SERVICIOS</h3>", unsafe_allow_html=True)
 
     st.write(""" 
     Pasos a seguir para este módulo:
@@ -550,7 +554,6 @@ try:
     load_clf = load_model()
     prediction_proba = load_clf.predict_proba(data_proba_robos1)
 
-    st.markdown("<h5 style='text-align: left;'>% Riesgo de los Servicios</h5>", unsafe_allow_html=True)
     prediction_proba1 = pd.DataFrame(prediction_proba, columns = ['NO','SI'])
     entrada_datos1 = resultados_proba(uploaded_file)
     entrada_datos2 = pd.concat([entrada_datos1,prediction_proba1], axis=1)
@@ -558,9 +561,23 @@ try:
     entrada_datos2 = entrada_datos2.rename(columns={'SI':'% Riesgo'})
     entrada_datos2['% Riesgo'] = round(entrada_datos2['% Riesgo'] * 100,2)
 
-    col1, col2, col3 = st.columns([1,5,1])
+    #Indice de priorizacion
+    elementos = {"Prioridad 1" : 90, "Prioridad 2": 60, "Prioridad 3": 40, "Prioridad 4": 10}
+    prioridad = pd.DataFrame(elementos, index = [0])
+
+    st.markdown("<h5 style='text-align: left;'>Orden de Priorización de Servicios</h5>", unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1,1,1])
     with col2:
-        st.write(entrada_datos2)
+        st.dataframe(prioridad.style.applymap(color), hide_index= True)
+
+    col4, col5, col6 = st.columns([1,5,1])
+    #st.markdown("<h5 style='text-align: left;'>% Riesgo de los Servicios</h5>", unsafe_allow_html=True)
+    with col5:
+        #entrada_datos2.style.format({'% Riesgo': "{:.2}"})
+        st.dataframe(entrada_datos2.style.format({'% Riesgo': "{:.2f}"}).applymap(lambda x: f'background-color: red; color: darkred' if x >= 70 else \
+                                            f'background-color: yellow; color: darkgoldenrod' if x < 70 and x >= 50 else \
+                                            (f'background-color: goldenrod; color: gold' if x < 50 and x >= 20 else f'background-color: green; color: greenyellow'), subset= ['% Riesgo']), hide_index= True)
 
     #Modulo de Zonas de Riesgo
     st.markdown("<h3 style='text-align: left;'>ZONAS DE RIESGO DE LOS SERVICIOS</h3>", unsafe_allow_html=True)
@@ -597,22 +614,11 @@ try:
     df11['Origen Destino'] = df11['Estado Origen'] + '-' + df11['Estado Destino']
     df12 = df11[df11['Origen Destino'].isin(df10['Origen Destino'])] # aca se aplica filtro para buscar los tramos basados en origen y destino
     df13 = pd.DataFrame(df12.groupby("Origen Destino")["Bitácora"].count())
-
-    st.write(df13)
     table = pd.pivot_table(df10, index = ["Origen Destino", "Distancia", "DuracionEstimada", "Estadías NOM-087"], columns = ["Anomalía"], aggfunc = 'size', fill_value=0)
-    def custFunc(d1,d2):
-        return d1 / d2
-    
-    #col = table.columns
-    #val = len(col)
-    #print(val)
-    #f14 = table.iloc[:, 4:-1] # Primeras cinco columnas
-    #f14 = table.iloc[:,:val] # Primeras cinco columnas
-
-    df14 = table / df13['Bitácora']
-    #df14 = custFunc(df1, df2.loc[0]).fillna(df1)
-
-    st.dataframe(df14)
+    df14 = table.reset_index()
+    df15 = table.div(df13.values)
+    df15 = df15.apply(np.ceil)
+    st.dataframe(df15)
 
     
 except UnboundLocalError as e:
